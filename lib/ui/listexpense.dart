@@ -1,8 +1,24 @@
+import 'package:buildcontext_inputs/model/expenses_model.dart';
 import 'package:buildcontext_inputs/model/mock_data.dart';
+import 'package:buildcontext_inputs/ui/edit_form.dart';
 import 'package:flutter/material.dart';
 
 class listExpense extends StatefulWidget {
-  const listExpense({super.key, required this.callback});
+  const listExpense({
+    super.key,
+    required this.callback,
+    required this.onCallBackEdit,
+  });
+
+  final Function(
+    int index, {
+    String? title,
+    double? price,
+    ExpenseCategory? category,
+    DateTime? date,
+  })
+  onCallBackEdit;
+
   final Function(int index) callback;
 
   @override
@@ -33,9 +49,20 @@ class _listExpenseState extends State<listExpense> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      mockData[index].icon ?? Icon(Icons.error),
+                      Icon(mockData[index].category?.icon ?? Icons.error),
                       SizedBox(width: 20),
                       Text(mockData[index].date.toString()),
+                      IconButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            /* isScrollControlled: true, */
+                            builder: (ctx) => EditForm(),
+                          );
+                        },
+                        icon: Icon(Icons.edit),
+                        color: Colors.blue,
+                      ),
                       IconButton(
                         onPressed: () {
                           setState(() {

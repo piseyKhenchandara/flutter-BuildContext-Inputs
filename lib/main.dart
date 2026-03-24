@@ -17,16 +17,40 @@ void main() {
 class homepage extends StatefulWidget {
   const homepage({super.key});
 
-
   @override
   State<homepage> createState() => _homepageState();
 }
 
 class _homepageState extends State<homepage> {
-
   void deleteCard(int index) {
-    mockData.removeAt(index);
+    setState(() {
+      mockData.removeAt(index);
+    });
   }
+
+  void editCard(
+    int index, {
+    String? title,
+    double? price,
+    ExpenseCategory? category,
+    DateTime? date,
+  }) {
+    setState(() {
+      if (title != null) {
+        mockData[index].title = title;
+      }
+      if (price != null) {
+        mockData[index].price = price.toDouble();
+      }
+      if (category != null) {
+        mockData[index].category = category;
+      }
+      if (date != null) {
+        mockData[index].date = date;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +64,13 @@ class _homepageState extends State<homepage> {
               showModalBottomSheet(
                 context: context,
                 builder: (ctx) => ExpenseForm(
-                  onCreateExpense: (title, amount) {
+                  onCreateExpense: (title, amount, category) {
                     setState(() {
                       mockData.add(
                         ExpensesModel(
                           title: title,
                           price: double.parse(amount),
-                          icon: Icon(Icons.attach_money),
+                          category: category,
                           date: DateTime.now(),
                         ),
                       );
@@ -59,9 +83,7 @@ class _homepageState extends State<homepage> {
           ),
         ],
       ),
-      body: listExpense(
-        callback: deleteCard,
-      ),
+      body: listExpense(callback: deleteCard, onCallBackEdit: editCard),
     );
   }
 }

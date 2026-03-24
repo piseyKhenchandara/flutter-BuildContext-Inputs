@@ -1,7 +1,9 @@
+import 'package:buildcontext_inputs/model/expenses_model.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseForm extends StatefulWidget {
-  final Function(String title, String amount) onCreateExpense;
+  final Function(String title, String amount, ExpenseCategory? category)
+  onCreateExpense;
 
   const ExpenseForm({super.key, required this.onCreateExpense});
 
@@ -15,10 +17,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
   String text1 = '';
   String text2 = '';
+  ExpenseCategory? _selectedCategory;
 
   @override
   void initState() {
-    // TODO: implement initState
     controller1 = TextEditingController();
     controller2 = TextEditingController();
     super.initState();
@@ -26,7 +28,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     controller1.dispose();
     controller2.dispose();
     super.dispose();
@@ -63,6 +64,32 @@ class _ExpenseFormState extends State<ExpenseForm> {
             },
           ),
 
+          SizedBox(height: 20),
+
+          /* 
+          items: ExpenseCategory.values.map((cat) {
+            return DropdownMenuItem(
+              value: cat,
+              child: Text(cat.name),
+            );
+          }).toList(), 
+          
+           */
+          DropdownButton(
+            value: _selectedCategory,
+            hint: Text("select one"),
+            items: ExpenseCategory.values.map((cat) {
+              return DropdownMenuItem(value: cat, child: Text(cat.name));
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedCategory = value;
+              });
+            },
+          ),
+
+          SizedBox(height: 20),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -76,8 +103,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
               ElevatedButton(
                 onPressed: () {
-                  widget.onCreateExpense(controller1.text, controller2.text);
-
+                  widget.onCreateExpense(
+                    controller1.text,
+                    controller2.text,
+                    _selectedCategory,
+                  );
                   Navigator.pop(context);
                 },
                 child: Text('Create'),
